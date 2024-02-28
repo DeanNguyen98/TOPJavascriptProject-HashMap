@@ -1,0 +1,1 @@
+Creating a raw Hashmap as per the Odin Project requirements.
