@@ -33,7 +33,7 @@ class HashMap {
     }
 
     set(key, value) {
-        if (this.size / this.length >= this.loadFactor) {
+        if (this.size / this.capacity >= this.loadFactor) {
             this.grow();
         }
         const hashCode = this.hash(key);
@@ -41,7 +41,7 @@ class HashMap {
             throw new Error("Trying to access index out of bound");
           }
         if (!this.buckets[hashCode]) {
-            this.buckets.hashCode = [];
+            this.buckets[hashCode] = [];
         }
         const bucket = this.buckets[hashCode];
         for (let i=0; i < bucket.length; i++) {
@@ -104,7 +104,7 @@ class HashMap {
     }
     clear() {
         this.size = 0;
-        this.buckets = new Array(initialCapacity);
+        this.buckets = new Array(this.capacity);
     }
     keys() {
         const keys = [];
@@ -126,6 +126,7 @@ class HashMap {
                 }
             }
         }
+        return values;
     }
     entries() {
         const entries = [];
@@ -139,5 +140,19 @@ class HashMap {
         return entries;
     }
 }
+
+const map = new HashMap();
+map.set('key1', 'value1');
+map.set('key2', 'value2');
+map.set('key3', 'value3');
+
+console.log(map.get('key1'));
+console.log(map.has('key2')); 
+
+map.remove('key3');
+console.log(map.keys()); 
+
+map.clear();
+console.log(map.length()); 
 
 
