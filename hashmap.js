@@ -3,6 +3,7 @@ class HashMap {
         this.buckets = new Array(initialCapacity);
         this.size = 0;
         this.loadFactor = loadFactor;
+        this.capacity = initialCapacity;
     }
 
     hash(key) {
@@ -15,16 +16,20 @@ class HashMap {
     }
 
     grow() {
-        const oldBuckets = this.buckets;
-        this.buckets = new Array(oldBuckets.length * 2);
-        this.size = 0;
-        for (const bucket of oldBuckets) {
+        this.capacity *= 2;
+        const newBucket = new Array(this.capacity);
+        for (const bucket of this.buckets) {
             if (bucket) {
-                for (const entry of bucket) {
-                    this.set(entry.key, entry.value)
+                for (const {key, value} of bucket) {
+                    const hashCode = this.hash(key);
+                    if (!newBucket[hashCode]) {
+                        newBucket[hashCode] = [];
+                    }
+                    newBucket[hashCode].push({key,value});
                 }
             }
         }
+        this.buckets = newBucket;
     }
 
     set(key, value) {
@@ -78,7 +83,29 @@ class HashMap {
         }
         return false;
     }
-
+    remove(key) {
+        const hashCode = this.hash(key);
+        if (hashCode < 0 || hashCode >= this.buckets.length) {
+            throw new Error("Trying to access index out of bound");
+        }
+        const bucket = this.buckets[hashCode];
+        if (!bucket) return false;
+        for (let i = 0; i < bucket.length; i++) {
+            if (bucket[i].key === key) {
+                bucket.splice(i, 1);
+                this.size--;
+                return true;
+            }
+        }
+        return false;
+    }
+    length() {
+        return this.size;
+    }
+    clear() {
+        this.size = 0;
+        this.buckets = new Array(initialCapacity);
+    }
 }
 
 
