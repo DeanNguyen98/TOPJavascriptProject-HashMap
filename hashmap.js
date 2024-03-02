@@ -28,24 +28,57 @@ class HashMap {
     }
 
     set(key, value) {
-        if (this.size / this.buckets.length >= this.loadFactor) {
+        if (this.size / this.length >= this.loadFactor) {
             this.grow();
         }
         const hashCode = this.hash(key);
         if (hashCode < 0 || hashCode >= this.buckets.length) {
             throw new Error("Trying to access index out of bound");
-        }
+          }
         if (!this.buckets[hashCode]) {
-            this.buckets[hashCode] = [];
+            this.buckets.hashCode = [];
         }
         const bucket = this.buckets[hashCode];
-        for (let i = 0; i < bucket.length; i++) {
+        for (let i=0; i < bucket.length; i++) {
             if (bucket[i].key === key) {
                 bucket[i].value = value;
                 return;
             }
         }
-        this.buckets[hashCode].push({key, value});
+        bucket.push({key, value});
         this.size++;
     }
+    get(key) {
+        const hashCode = this.hash(key);
+        if (hashCode < 0 || hashCode >= this.buckets.length) {
+            throw new Error("Trying to access index out of bound");
+        }
+        const bucket = this.buckets[hashCode];
+        if (!bucket) {
+            return null;
+        }
+        for (const entry of bucket) {
+            if (entry.key === key) {
+                return entry.value;
+            }
+        }
+        return null;
+    }
+    has(key) {
+        const hashCode = this.hash(key);
+        if (hashCode < 0 || hashCode >= this.buckets.length) {
+            throw new Error("Trying to access index out of bound");
+        }
+        const bucket = this.buckets[hashCode];
+        if (!bucket) return false;
+        for (let i = 0; i < bucket.length; i++) {
+            if (bucket[i].key === key) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
+
+
